@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("mysql://sql3703349:FBjhtDBzq6@sql3.freemysqlhosting.net:3306/sql3703349")
 }
 
 model almaceninsumos {
