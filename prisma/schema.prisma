@@ -1,0 +1,209 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model almaceninsumos {
+  Insumos_id         Int
+  Proveedores_id     Int
+  cantidad           String      @db.VarChar(45)
+  estado             Int         @default(1) @db.TinyInt
+  fechaRegistro      DateTime?   @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime    @db.DateTime(0)
+  insumo             insumo      @relation(fields: [Insumos_id], references: [idInsumo], onDelete: NoAction, onUpdate: NoAction, map: "fk_Insumos_has_Proveedores_Insumos1")
+  proveedores        proveedores @relation(fields: [Proveedores_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Insumos_has_Proveedores_Proveedores1")
+
+  @@id([Insumos_id, Proveedores_id])
+  @@index([Insumos_id], map: "fk_Insumos_has_Proveedores_Insumos1_idx")
+  @@index([Proveedores_id], map: "fk_Insumos_has_Proveedores_Proveedores1_idx")
+}
+
+model atributo {
+  idAtributo Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(45)
+  valor      String    @db.VarChar(45)
+  idProducto Int
+  productos  productos @relation(fields: [idProducto], references: [idProductos], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_productos5")
+
+  @@index([idProducto], map: "id_idx")
+}
+
+model categoria {
+  idCategoria Int         @id @default(autoincrement())
+  nombre      String      @db.VarChar(60)
+  productos   productos[]
+}
+
+model cliente {
+  idCliente          Int       @id
+  direccion          String    @db.VarChar(60)
+  estado             Int       @default(1) @db.TinyInt
+  fechaRegistro      DateTime? @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime  @db.DateTime(0)
+  usuario            usuario   @relation(fields: [idCliente], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Cliente_usuario1")
+  venta              venta[]
+
+  @@index([idCliente], map: "fk_Cliente_usuario1_idx")
+}
+
+model detalleventas {
+  id                 Int       @id @default(autoincrement())
+  idVenta            Int
+  idProducto         Int
+  cantidad           Int       @db.TinyInt
+  nit                String    @db.VarChar(45)
+  precioUnitario     Decimal   @db.Decimal(18, 2)
+  inporte            Decimal   @db.Decimal(18, 2)
+  estado             Int       @default(1) @db.TinyInt
+  fechaRegistro      DateTime? @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime  @db.DateTime(0)
+  productos          productos @relation(fields: [idProducto], references: [idProductos], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_producto")
+  venta              venta     @relation(fields: [idVenta], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_venta")
+
+  @@index([idVenta], map: "id_idx")
+  @@index([idProducto], map: "id_idx1")
+}
+
+model insumo {
+  idInsumo         Int                @id @default(autoincrement())
+  nombre           String             @db.VarChar(45)
+  precio           Decimal            @db.Decimal(18, 2)
+  cantidad         Int
+  almaceninsumos   almaceninsumos[]
+  insumoproduccion insumoproduccion[]
+}
+
+model insumoproduccion {
+  Insumo_idInsumo Int
+  Produccion_id   Int
+  cantidadEntrada Int
+  cantidadSalida  Int
+  cantidadTotal   Int
+  fechaRegistro   DateTime?  @default(now()) @db.DateTime(0)
+  insumo          insumo     @relation(fields: [Insumo_idInsumo], references: [idInsumo], onDelete: NoAction, onUpdate: NoAction, map: "fk_Insumo_has_Produccion_Insumo1")
+  produccion      produccion @relation(fields: [Produccion_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Insumo_has_Produccion_Produccion1")
+
+  @@id([Insumo_idInsumo, Produccion_id])
+  @@index([Insumo_idInsumo], map: "fk_Insumo_has_Produccion_Insumo1_idx")
+  @@index([Produccion_id], map: "fk_Insumo_has_Produccion_Produccion1_idx")
+}
+
+model organizacion {
+  idOrganizacion Int         @id
+  latitud        String      @db.VarChar(60)
+  longitud       String      @db.VarChar(60)
+  crearProductos Int?        @db.TinyInt
+  nit            String      @db.VarChar(45)
+  usuario        usuario     @relation(fields: [idOrganizacion], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Organizacion_usuario1")
+  productor      productor[]
+}
+
+model produccion {
+  id                 Int                @id @default(autoincrement())
+  idProductos        Int
+  idProductor        Int
+  estado             Int                @default(1) @db.TinyInt
+  canrtidad          Int
+  fechaRegistro      DateTime?          @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime           @db.DateTime(0)
+  insumoproduccion   insumoproduccion[]
+  productor          productor          @relation(fields: [idProductor], references: [idProductor], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_productor2")
+  productos          productos          @relation(fields: [idProductos], references: [idProductos], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_productos2")
+
+  @@index([idProductor], map: "fk_id_productor_idx")
+  @@index([idProductos], map: "fk_id_productos_idx")
+}
+
+model productor {
+  idProductor        Int          @id
+  puesto             String       @db.VarChar(45)
+  latitud            Float        @db.Float
+  longitud           Float        @db.Float
+  idOrganizacion     Int
+  estado             Int          @default(1) @db.TinyInt
+  fechaRegistro      DateTime?    @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime     @db.DateTime(0)
+  produccion         produccion[]
+  usuario            usuario      @relation(fields: [idProductor], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Productores_usuario1")
+  organizacion       organizacion @relation(fields: [idOrganizacion], references: [idOrganizacion], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_organizacion")
+  productos          productos[]
+
+  @@index([idOrganizacion], map: "id_idx")
+}
+
+model productos {
+  idProductos        Int             @id @default(autoincrement())
+  nombre             String          @db.VarChar(45)
+  precio             Decimal         @db.Decimal(18, 2)
+  descripcion        String?         @db.VarChar(100)
+  idCategoria        Int
+  cantidad           Int
+  idProductor        Int
+  estado             Int             @default(1) @db.TinyInt
+  fechaRegistro      DateTime?       @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime        @db.DateTime(0)
+  fechaVencimiento   DateTime?       @db.DateTime(0)
+  mainIndex          Int             @default(0) @db.TinyInt
+  atributo           atributo[]
+  detalleventas      detalleventas[]
+  produccion         produccion[]
+  categoria          categoria       @relation(fields: [idCategoria], references: [idCategoria], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_categoria")
+  productor          productor       @relation(fields: [idProductor], references: [idProductor], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_productor")
+  ruta               ruta[]
+
+  @@index([idCategoria], map: "id_idx")
+  @@index([idProductor], map: "id_idx1")
+}
+
+model proveedores {
+  id                 Int              @id @default(autoincrement())
+  nombre             String           @db.VarChar(45)
+  celular            String           @db.VarChar(45)
+  estado             Int              @default(1) @db.TinyInt
+  fechaRegistro      DateTime?        @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime         @db.DateTime(0)
+  almaceninsumos     almaceninsumos[]
+}
+
+model ruta {
+  id                 Int       @id @default(autoincrement())
+  ruta               String    @db.VarChar(200)
+  idProducto         Int
+  estado             Int       @default(1) @db.TinyInt
+  fechaRegistro      DateTime? @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime  @db.DateTime(0)
+  productos          productos @relation(fields: [idProducto], references: [idProductos], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_productos3")
+
+  @@index([idProducto], map: "id_idx")
+}
+
+model usuario {
+  id                 Int           @id @default(autoincrement())
+  nombre             String        @db.VarChar(45)
+  apellido           String        @db.VarChar(45)
+  correo             String        @db.VarChar(45)
+  contrasena         String        @db.VarChar(45)
+  celular            String        @db.VarChar(45)
+  estado             Int           @default(1) @db.TinyInt
+  fechaRegistro      DateTime?     @default(now()) @db.DateTime(0)
+  fechaActualizacion DateTime      @db.DateTime(0)
+  cliente            cliente?
+  organizacion       organizacion?
+  productor          productor?
+}
+
+model venta {
+  id            Int             @id @default(autoincrement())
+  idCliente     Int
+  total         Decimal         @db.Decimal(18, 2)
+  estado        Int             @default(1) @db.TinyInt
+  fechaRegistro DateTime        @default(now()) @db.DateTime(0)
+  detalleventas detalleventas[]
+  cliente       cliente         @relation(fields: [idCliente], references: [idCliente], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_cliente")
+
+  @@index([idCliente], map: "id_idx")
+}
