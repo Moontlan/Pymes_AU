@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"; //npm i --save-dev @types/jsonwebtoken
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import SHA256Crypt from '@/hash';
 
 interface Params {
   params: { correo: string };
@@ -24,15 +25,30 @@ export async function POST(request: Request) {
     const usuario = await prisma.usuario.findFirst({
       where: {
         correo: body.correo,
-        contrasena: body.contrasena,
+        //contrasena: body.contrasena,
         estado: 1,
       },
     });
 
-    // Verificar si se encontró un usuario
-    if (!usuario) {
-      throw new Error("Credenciales inválidas");
+    if(usuario){
+      const password = usuario?.contrasena;
+
+      const partes = password.split('$');
+      const salt = partes[2];
+
+      // Realizar verificación de contraseña
+      const nuevoHash = SHA256Crypt.Hash(body.contrasena, salt);
+
+      if(password!=nuevoHash){
+        throw new Error("Contraseña inválida");
+      }
+      
+    } else {
+      throw new Error("Correo inválido");
     }
+
+    // Verificar si se encontró un usuario
+
 
     // Verificar el tipo de usuario
     const org = await prisma.organizacion.findFirst({

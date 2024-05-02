@@ -1,7 +1,12 @@
 {
   "/Login/page": "app/Login/page.js",
   "/page": "app/page.js",
+  "/api/login/route": "app/api/login/route.js",
   "/Principal/page": "app/Principal/page.js",
-  "/Usuario/MiPerfil/page": "app/Usuario/MiPerfil/page.js",
-  "/api/usuario/[id]/route": "app/api/usuario/[id]/route.js"
+  "/Producto/Mostrar/page": "app/Producto/Mostrar/page.js",
+  "/api/producto/route": "app/api/producto/route.js",
+  "/Produccion/Mostrar/page": "app/Produccion/Mostrar/page.js",
+  "/api/insumosProduccion/route": "app/api/insumosProduccion/route.js",
+  "/Categoria/Mostrar/page": "app/Categoria/Mostrar/page.js",
+  "/api/categoria/route": "app/api/categoria/route.js"
 }

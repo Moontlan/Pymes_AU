@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import SHA256Crypt from '@/hash';
 import { Button, Link, user } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import CryptoJS from "crypto-js";
@@ -17,6 +18,7 @@ interface User {
   correo: string;
   contrasena: string;
 }
+
 export default function Login() {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -47,8 +49,8 @@ export default function Login() {
     };
 
     const axios = require("axios");
-    var pass = CryptoJS.MD5(user.contrasena).toString(CryptoJS.enc.Hex);
-    user.contrasena = pass;
+    //var pass = CryptoJS.MD5(user.contrasena).toString(CryptoJS.enc.Hex);
+    //user.contrasena = pass;
 
     try {
       var resp = await axios.post("/api/login/", {
