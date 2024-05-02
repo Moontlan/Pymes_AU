@@ -20,21 +20,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/Principal/page.js"
-    ],
-    "/Producto/Mostrar/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/Producto/Mostrar/page.js"
-    ],
-    "/Produccion/Mostrar/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/Produccion/Mostrar/page.js"
-    ],
-    "/Categoria/Mostrar/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/Categoria/Mostrar/page.js"
     ]
   }
 }

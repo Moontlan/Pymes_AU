@@ -28,8 +28,14 @@ class SHA256Crypt {
         // Asegurar que la longitud de bytes sea múltiplo de 4
         const paddingLength = bytes.length % 4;
         if (paddingLength > 0) {
+            const newBytesLength = bytes.length + (4 - paddingLength);
+            const newBytes = new Uint8Array(newBytesLength);
+            newBytes.set(bytes); // Copiar los bytes originales
+
             const padding = new Uint8Array(4 - paddingLength);
-            bytes = new Uint8Array([...bytes, ...padding]);
+            newBytes.set(padding, bytes.length); // Agregar el relleno al final
+
+            bytes = newBytes;
         }
         
         // Calcular el hash SHA-256 inicial
